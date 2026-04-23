@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
 import FilePanel from '../components/FilePanel';
 import { Search, User as UserIcon, MoreHorizontal, Check, Archive } from 'lucide-react';
@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingCell, setEditingCell] = useState(null); // { id, field }
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const [copyFeedback, setCopyFeedback] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -22,8 +23,13 @@ export default function Dashboard() {
     const handleEsc = (event) => {
       if (event.keyCode === 27) setOpenMenuId(null);
     };
+    const handleScroll = () => setOpenMenuId(null);
     window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener('scroll', handleScroll, true);
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
   }, []);
 
   const fetchSettings = async () => {
@@ -246,11 +252,20 @@ export default function Dashboard() {
                       </div>
                     </td>
 
-                    <td style={{ position: 'relative' }}>
+                    <td>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
-                          setOpenMenuId(openMenuId === appeal.id ? null : appeal.id);
+                          if (openMenuId === appeal.id) {
+                            setOpenMenuId(null);
+                          } else {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            const menuHeight = 340; // approximate menu height
+                            const spaceBelow = window.innerHeight - rect.bottom;
+                            const top = spaceBelow < menuHeight ? rect.top - menuHeight : rect.bottom + 4;
+                            setMenuPos({ top, left: rect.right - 220 });
+                            setOpenMenuId(appeal.id);
+                          }
                         }}
                         style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#697386' }}
                       >
@@ -260,13 +275,20 @@ export default function Dashboard() {
                       {openMenuId === appeal.id && (
                         <>
                           <div 
-                            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
+                            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9998 }} 
                             onClick={() => setOpenMenuId(null)}
                           />
-                          <div className="status-dropdown" style={{ 
-                            zIndex: 9999, 
+                          <div style={{ 
+                            position: 'fixed',
+                            top: `${menuPos.top}px`,
+                            left: `${menuPos.left}px`,
+                            zIndex: 9999,
                             width: '220px',
-                            ...(index >= 4 ? { bottom: '35px' } : { top: '35px' })
+                            background: 'white',
+                            border: '1px solid #eef2f7',
+                            borderRadius: '10px',
+                            boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                            padding: '6px 0'
                           }}>
                             {statusOptions.map(opt => {
                               const sClass = getStatusClass(opt);
