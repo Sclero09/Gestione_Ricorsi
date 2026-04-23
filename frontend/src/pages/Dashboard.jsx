@@ -281,15 +281,28 @@ export default function Dashboard() {
                                     alignItems: 'center', 
                                     gap: '8px',
                                     fontWeight: isActive ? '700' : '500',
-                                    backgroundColor: isActive ? '#f1f5f9' : 'transparent',
-                                    borderLeft: `4px solid ${isActive ? '#2e5bff' : 'transparent'}`,
+                                    backgroundColor: sClass.includes('da-presentare') ? '#f1f5f9' : 
+                                                    sClass.includes('presentato') ? '#eff6ff' :
+                                                    sClass.includes('udienza') ? '#fffbeb' :
+                                                    (sClass.includes('accolto') || sClass.includes('concluso')) ? '#ecfdf5' :
+                                                    sClass.includes('rigettato') ? '#fef2f2' :
+                                                    sClass.includes('liquidato') ? '#f5f3ff' :
+                                                    sClass.includes('fatturato') ? '#faf5ff' : '#f1f5f9',
+                                    color: sClass.includes('da-presentare') ? '#64748b' : 
+                                           sClass.includes('presentato') ? '#2563eb' :
+                                           sClass.includes('udienza') ? '#d97706' :
+                                           (sClass.includes('accolto') || sClass.includes('concluso')) ? '#059669' :
+                                           sClass.includes('rigettato') ? '#dc2626' :
+                                           sClass.includes('liquidato') ? '#7c3aed' :
+                                           sClass.includes('fatturato') ? '#9333ea' : '#64748b',
+                                    borderLeft: `4px solid ${isActive ? 'currentColor' : 'transparent'}`,
                                     padding: '10px 16px',
-                                    color: '#1e293b'
+                                    margin: '2px 4px',
+                                    borderRadius: '6px'
                                   }}
                                 >
-                                  <div className={`status-badge ${sClass}`} style={{ width: '12px', height: '12px', padding: 0, borderRadius: '50%' }}></div>
                                   {opt}
-                                  {isActive && <Check size={14} style={{ marginLeft: 'auto', color: '#2e5bff' }} />}
+                                  {isActive && <Check size={14} style={{ marginLeft: 'auto' }} />}
                                 </div>
                               );
                             })}
