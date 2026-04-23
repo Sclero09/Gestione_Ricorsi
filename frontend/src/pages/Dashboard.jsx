@@ -263,7 +263,7 @@ export default function Dashboard() {
                             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
                             onClick={() => setOpenMenuId(null)}
                           />
-                          <div className="status-dropdown" style={{ zIndex: 100 }}>
+                          <div className="status-dropdown" style={{ zIndex: 100, width: '220px' }}>
                             {statusOptions.map(opt => {
                               const sClass = getStatusClass(opt);
                               const isActive = appeal.status === opt;
@@ -279,7 +279,7 @@ export default function Dashboard() {
                                   style={{ 
                                     display: 'flex', 
                                     alignItems: 'center', 
-                                    gap: '8px',
+                                    gap: '10px',
                                     fontWeight: isActive ? '700' : '500',
                                     backgroundColor: sClass.includes('da-presentare') ? '#f1f5f9' : 
                                                     sClass.includes('presentato') ? '#eff6ff' :
@@ -296,17 +296,18 @@ export default function Dashboard() {
                                            sClass.includes('liquidato') ? '#7c3aed' :
                                            sClass.includes('fatturato') ? '#9333ea' : '#64748b',
                                     borderLeft: `4px solid ${isActive ? 'currentColor' : 'transparent'}`,
-                                    padding: '10px 16px',
-                                    margin: '2px 4px',
-                                    borderRadius: '6px'
+                                    padding: '12px 16px',
+                                    margin: '3px 6px',
+                                    borderRadius: '8px',
+                                    fontSize: '13px'
                                   }}
                                 >
                                   {opt}
-                                  {isActive && <Check size={14} style={{ marginLeft: 'auto' }} />}
+                                  {isActive && <Check size={16} style={{ marginLeft: 'auto' }} />}
                                 </div>
                               );
                             })}
-                            <div style={{ borderTop: '1px solid #eef2f7', margin: '4px 0' }}></div>
+                            <div style={{ borderTop: '1px solid #eef2f7', margin: '6px 0' }}></div>
                             <div 
                               className="dropdown-item"
                               onClick={(e) => {
@@ -314,10 +315,20 @@ export default function Dashboard() {
                                 handleUpdateStatus(appeal.id, { is_archived: true });
                                 setOpenMenuId(null);
                               }}
-                              style={{ color: '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}
+                              style={{ 
+                                color: '#ef4444', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '10px', 
+                                fontWeight: '700',
+                                padding: '12px 16px',
+                                margin: '3px 6px',
+                                borderRadius: '8px',
+                                backgroundColor: '#fef2f2'
+                              }}
                             >
-                              <Archive size={14} />
-                              Archivia
+                              <Archive size={18} />
+                              Archivia Pratica
                             </div>
                           </div>
                         </>

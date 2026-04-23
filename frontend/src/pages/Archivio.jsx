@@ -201,11 +201,11 @@ export default function Archivio() {
                             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
                             onClick={() => setOpenMenuId(null)}
                           />
-                          <div className="status-dropdown" style={{ zIndex: 100 }}>
-                            {statusOptions.map(opt => {
-                              const sClass = getStatusClass(opt);
-                              const isActive = appeal.status === opt;
-                              return (
+                          <div className="status-dropdown" style={{ zIndex: 100, width: '220px' }}>
+                             {statusOptions.map(opt => {
+                               const sClass = getStatusClass(opt);
+                               const isActive = appeal.status === opt;
+                               return (
                                 <div 
                                   key={opt}
                                   className="dropdown-item"
@@ -217,7 +217,7 @@ export default function Archivio() {
                                   style={{ 
                                     display: 'flex', 
                                     alignItems: 'center', 
-                                    gap: '8px',
+                                    gap: '10px',
                                     fontWeight: isActive ? '700' : '500',
                                     backgroundColor: sClass.includes('da-presentare') ? '#f1f5f9' : 
                                                     sClass.includes('presentato') ? '#eff6ff' :
@@ -234,38 +234,40 @@ export default function Archivio() {
                                            sClass.includes('liquidato') ? '#7c3aed' :
                                            sClass.includes('fatturato') ? '#9333ea' : '#64748b',
                                     borderLeft: `4px solid ${isActive ? 'currentColor' : 'transparent'}`,
-                                    padding: '10px 16px',
-                                    margin: '2px 4px',
-                                    borderRadius: '6px'
+                                    padding: '12px 16px',
+                                    margin: '3px 6px',
+                                    borderRadius: '8px',
+                                    fontSize: '13px'
                                   }}
                                 >
                                   {opt}
-                                  {isActive && <Check size={14} style={{ marginLeft: 'auto' }} />}
+                                  {isActive && <Check size={16} style={{ marginLeft: 'auto' }} />}
                                 </div>
-                              );
-                            })}
-                            <div style={{ borderTop: '1px solid #eef2f7', margin: '4px 0' }}></div>
-                            <div 
-                              className="dropdown-item"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleUpdateStatus(appeal.id, { is_archived: false });
-                                setOpenMenuId(null);
-                              }}
-                              style={{ 
-                                color: '#10b981', 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '8px',
-                                fontWeight: '700',
-                                padding: '10px 12px',
-                                margin: '2px 4px',
-                                borderRadius: '6px'
-                              }}
-                            >
-                              <RotateCcw size={14} />
-                              Ripristina Pratica
-                            </div>
+                               );
+                             })}
+                             <div style={{ borderTop: '1px solid #eef2f7', margin: '6px 0' }}></div>
+                             <div 
+                               className="dropdown-item"
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 handleUpdateStatus(appeal.id, { is_archived: false });
+                                 setOpenMenuId(null);
+                               }}
+                               style={{ 
+                                 color: '#059669', 
+                                 display: 'flex', 
+                                 alignItems: 'center', 
+                                 gap: '10px',
+                                 fontWeight: '700',
+                                 padding: '12px 16px',
+                                 margin: '3px 6px',
+                                 borderRadius: '8px',
+                                 backgroundColor: '#f0fdf4'
+                               }}
+                             >
+                               <RotateCcw size={18} />
+                               Ripristina Pratica
+                             </div>
                           </div>
                         </>
                       )}
