@@ -153,12 +153,12 @@ Stato: ${appeal.status}
       <div style={{ padding: '16px 16px 8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#697386' }}>
         <div 
           onClick={() => handleOpenFolderInExplorer(appeal?.folder_path)}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'color 0.2s' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
           title="Apri cartella principale del cliente"
-          className="hover-blue"
+          className="folder-link"
         >
           <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} />
-          <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569' }}>Apri Cartella</span>
+          <span style={{ fontSize: '14px', fontWeight: '600' }}>Apri Cartella</span>
         </div>
         
         <div style={{ display: 'flex', gap: '16px' }}>
@@ -207,10 +207,9 @@ Stato: ${appeal.status}
               gap: '6px', 
               cursor: 'pointer',
               fontSize: '14px',
-              fontWeight: '600',
-              color: '#475569'
+              fontWeight: '600'
             }}
-            className="hover-blue"
+            className="folder-link"
             title={`Apri ${getSubDirName()} in Windows Explorer`}
           >
             <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} style={{ flexShrink: 0 }} />

@@ -285,7 +285,14 @@ body {
   color: var(--text-main);
 }
 
-.hover-blue:hover { color: #2e5bff; }
+.hover-blue:hover { color: #2e5bff !important; }
+.folder-link {
+  color: #475569;
+  transition: color 0.2s, background-color 0.2s;
+}
+.folder-link:hover {
+  color: #2e5bff;
+}
 .file-item:hover { border-color: #dbeafe; background-color: #fcfdfe; }
 .filename-text:hover { color: #2e5bff; text-decoration: underline; }
 .preview-btn:hover { background-color: #2e5bff; color: white; }
