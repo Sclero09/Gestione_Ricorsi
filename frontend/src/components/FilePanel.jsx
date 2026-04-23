@@ -206,13 +206,14 @@ Stato: ${appeal.status}
               alignItems: 'center', 
               gap: '6px', 
               cursor: 'pointer',
-              color: '#2e5bff',
-              fontSize: '13px',
-              fontWeight: '600'
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#475569'
             }}
+            className="hover-blue"
             title={`Apri ${getSubDirName()} in Windows Explorer`}
           >
-            <Folder size={16} fill="#2e5bff" fillOpacity={0.1} style={{ flexShrink: 0 }} />
+            <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} style={{ flexShrink: 0 }} />
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {getSubDirName()}
             </span>
