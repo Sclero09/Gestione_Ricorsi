@@ -270,7 +270,7 @@ export default function Dashboard() {
                               return (
                                 <div 
                                   key={opt}
-                                  className={`dropdown-item ${sClass}`}
+                                  className="dropdown-item"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleUpdateStatus(appeal.id, { status: opt });
@@ -281,14 +281,15 @@ export default function Dashboard() {
                                     alignItems: 'center', 
                                     gap: '8px',
                                     fontWeight: isActive ? '700' : '500',
-                                    borderLeft: isActive ? '4px solid currentColor' : 'none',
-                                    padding: '10px 12px',
-                                    margin: '2px 4px',
-                                    borderRadius: '6px'
+                                    backgroundColor: isActive ? '#f1f5f9' : 'transparent',
+                                    borderLeft: `4px solid ${isActive ? '#2e5bff' : 'transparent'}`,
+                                    padding: '10px 16px',
+                                    color: '#1e293b'
                                   }}
                                 >
+                                  <div className={`status-badge ${sClass}`} style={{ width: '12px', height: '12px', padding: 0, borderRadius: '50%' }}></div>
                                   {opt}
-                                  {isActive && <Check size={14} style={{ marginLeft: 'auto' }} />}
+                                  {isActive && <Check size={14} style={{ marginLeft: 'auto', color: '#2e5bff' }} />}
                                 </div>
                               );
                             })}
