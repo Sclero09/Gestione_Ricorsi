@@ -52,12 +52,12 @@ app.add_middleware(
 def on_startup():
     create_db_and_tables()
 
-@app.get("/settings")
+@app.get("/api/settings")
 def get_settings(session: Session = Depends(get_session)):
     config = session.exec(select(AppConfig)).first()
     return config or {"base_path": ""}
 
-@app.post("/settings")
+@app.post("/api/settings")
 def update_settings(config_data: dict, session: Session = Depends(get_session)):
     config = session.exec(select(AppConfig)).first()
     if not config:
@@ -76,7 +76,7 @@ def update_settings(config_data: dict, session: Session = Depends(get_session)):
     session.refresh(config)
     return config
 
-@app.get("/appeals")
+@app.get("/api/appeals")
 def list_appeals(session: Session = Depends(get_session)):
     # Join Appeal with Recurrent
     statement = select(Appeal, Recurrent).join(Recurrent)
@@ -101,18 +101,18 @@ def list_appeals(session: Session = Depends(get_session)):
         })
     return appeals_list
 
-@app.get("/recurrents")
+@app.get("/api/recurrents")
 def list_recurrents(session: Session = Depends(get_session)):
     statement = select(Recurrent)
     return session.exec(statement).all()
 
-@app.get("/recurrents/{recurrent_id}/files")
+@app.get("/api/recurrents/{recurrent_id}/files")
 def list_files(recurrent_id: int, session: Session = Depends(get_session)):
     statement = select(Document).where(Document.recurrent_id == recurrent_id)
     files = session.exec(statement).all()
     return files
 
-@app.post("/scan")
+@app.post("/api/scan")
 def trigger_scan(session: Session = Depends(get_session)):
     try:
         config = session.exec(select(AppConfig)).first()
@@ -128,7 +128,7 @@ def trigger_scan(session: Session = Depends(get_session)):
         print(f"Error scanning: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/refresh_folder/{recurrent_id}")
+@app.post("/api/refresh_folder/{recurrent_id}")
 def refresh_folder(recurrent_id: int, session: Session = Depends(get_session)):
     try:
         config = session.exec(select(AppConfig)).first()
@@ -148,7 +148,7 @@ def refresh_folder(recurrent_id: int, session: Session = Depends(get_session)):
         print(f"Error refreshing folder: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/recurrents")
+@app.post("/api/recurrents")
 def create_recurrent(data: RecurrentRequest, session: Session = Depends(get_session)):
     config = session.exec(select(AppConfig)).first()
     if not config or not config.base_path:
@@ -184,7 +184,7 @@ def create_recurrent(data: RecurrentRequest, session: Session = Depends(get_sess
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.put("/recurrents/{recurrent_id}/rename")
+@app.put("/api/recurrents/{recurrent_id}/rename")
 def rename_folder(recurrent_id: int, new_name: str, session: Session = Depends(get_session)):
     config = session.exec(select(AppConfig)).first()
     if not config or not config.base_path:
@@ -195,7 +195,7 @@ def rename_folder(recurrent_id: int, new_name: str, session: Session = Depends(g
         raise HTTPException(status_code=500, detail="Failed to rename folder")
     return {"status": "success"}
 
-@app.put("/appeals/{appeal_id}")
+@app.put("/api/appeals/{appeal_id}")
 def update_appeal(appeal_id: int, data: AppealUpdate, session: Session = Depends(get_session)):
     appeal = session.get(Appeal, appeal_id)
     if not appeal:
@@ -207,8 +207,8 @@ def update_appeal(appeal_id: int, data: AppealUpdate, session: Session = Depends
             if "_date" in key and value and isinstance(value, str):
                 try:
                     setattr(appeal, key, datetime.strptime(value, "%d/%m/%Y"))
-                except:
-                    pass
+                except ValueError:
+                    raise HTTPException(status_code=400, detail=f"Formato data non valido per {key}: usa GG/MM/AAAA")
             else:
                 setattr(appeal, key, value)
     
@@ -217,30 +217,54 @@ def update_appeal(appeal_id: int, data: AppealUpdate, session: Session = Depends
     session.refresh(appeal)
     return appeal
 
-def _open_path(path: str):
-    if path and os.path.exists(path):
+def _open_path(path: str, session: Session):
+    # Security: Verify that the path is inside the configured base_path
+    config = session.exec(select(AppConfig)).first()
+    if not config or not config.base_path:
+        return {"status": "error", "message": "Base path not configured"}
+    
+    abs_path = os.path.abspath(path)
+    abs_base = os.path.abspath(config.base_path)
+    
+    if not abs_path.startswith(abs_base):
+        return {"status": "error", "message": "Access denied: outside of base path"}
+
+    if abs_path and os.path.exists(abs_path):
         if os.name == 'nt': # Windows
-            os.startfile(path)
+            os.startfile(abs_path)
         elif sys.platform == 'darwin': # macOS
-            subprocess.run(['open', path])
+            subprocess.run(['open', abs_path])
         else: # Linux
-            subprocess.run(['xdg-open', path])
+            subprocess.run(['xdg-open', abs_path])
         return {"status": "success"}
     return {"status": "error", "message": "Path not found"}
 
-@app.post("/open_folder")
-def open_folder(data: dict):
-    return _open_path(data.get("path"))
+@app.post("/api/open_folder")
+def open_folder(data: dict, session: Session = Depends(get_session)):
+    return _open_path(data.get("path"), session)
 
-@app.post("/open_file")
-def open_file(data: dict):
-    return _open_path(data.get("path"))
+@app.post("/api/open_file")
+def open_file(data: dict, session: Session = Depends(get_session)):
+    return _open_path(data.get("path"), session)
 
-@app.get("/documents/view")
-def view_document(path: str):
-    if os.path.exists(path):
-        return FileResponse(path)
-    return {"error": "File not found"}
+@app.get("/api/documents/view")
+def view_document(path: str, session: Session = Depends(get_session)):
+    # Security check for view as well
+    config = session.exec(select(AppConfig)).first()
+    if not config or not config.base_path:
+         raise HTTPException(status_code=400, detail="Base path not configured")
+    
+    abs_path = os.path.abspath(path)
+    abs_base = os.path.abspath(config.base_path)
+    
+    if not abs_path.startswith(abs_base):
+         raise HTTPException(status_code=403, detail="Access denied")
+
+    if os.path.exists(abs_path):
+        return FileResponse(abs_path)
+    raise HTTPException(status_code=404, detail="File not found")
+
+
 
 # Determine if we are running in a bundle or dev
 FRONTEND_DIR = None
@@ -267,6 +291,10 @@ if FRONTEND_DIR and os.path.exists(FRONTEND_DIR):
     
     @app.get("/{full_path:path}", response_class=HTMLResponse)
     async def serve_frontend(full_path: str):
+        # Important: Don't intercept API routes
+        if full_path.startswith("api/"):
+             raise HTTPException(status_code=404, detail="API route not found")
+
         # Serve static files if they exist
         file_path = os.path.join(FRONTEND_DIR, full_path)
         if os.path.isfile(file_path):
@@ -305,7 +333,7 @@ else:
 
 active_window = None
 
-@app.post("/select_folder")
+@app.post("/api/select_folder")
 def select_folder():
     global active_window
     if WEBVIEW_AVAILABLE and active_window:

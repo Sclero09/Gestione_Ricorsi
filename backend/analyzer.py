@@ -84,6 +84,13 @@ class PDFAnalyzer:
         try:
             text = self.extract_text_from_pdf(pdf_path)
             
+            if not text or not text.strip():
+                return {
+                    "category": "Scansione/Immagine",
+                    "data": {"info": "Nessun testo estratto (probabile scansione o PDF protetto)"},
+                    "snippet": ""
+                }
+
             # Determine category based on content
             category = "Altro"
             data = {}

@@ -12,7 +12,7 @@ export default function Clienti() {
 
   const fetchRecurrents = async () => {
     try {
-      const response = await fetch('/recurrents');
+      const response = await fetch('/api/recurrents');
       const data = await response.json();
       setRecurrents(Array.isArray(data) ? data : []);
       setLoading(false);

@@ -15,7 +15,7 @@ const FilePanel = ({ recurrentName, files = [], appeal, showCopyFeedback, onRefr
 
   const handleOpenFile = async (filePath) => {
     try {
-      await fetch('/open_file', {
+      await fetch('/api/open_file', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path: filePath })
@@ -28,7 +28,7 @@ const FilePanel = ({ recurrentName, files = [], appeal, showCopyFeedback, onRefr
   const handleOpenFolder = async () => {
     if (!appeal?.folder_path) return;
     try {
-      await fetch('/open_folder', {
+      await fetch('/api/open_folder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path: appeal.folder_path })

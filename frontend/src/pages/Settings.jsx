@@ -14,7 +14,7 @@ export default function Settings() {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('/settings');
+      const response = await fetch('/api/settings');
       const data = await response.json();
       setBasePath(data.base_path || '');
       setLawyerName(data.lawyer_name || '');
@@ -27,7 +27,7 @@ export default function Settings() {
   const handleSave = async () => {
     setStatus('Salvataggio...');
     try {
-      const response = await fetch('/settings', {
+      const response = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -47,7 +47,7 @@ export default function Settings() {
 
   const handleSelectFolder = async () => {
     try {
-      const response = await fetch('/select_folder', { method: 'POST' });
+      const response = await fetch('/api/select_folder', { method: 'POST' });
       const data = await response.json();
       if (data.path) {
         setBasePath(data.path);
@@ -60,7 +60,7 @@ export default function Settings() {
   const handleScan = async () => {
     setStatus('Scansione in corso...');
     try {
-      const response = await fetch('/scan', { method: 'POST' });
+      const response = await fetch('/api/scan', { method: 'POST' });
       if (response.ok) {
         setStatus('Scansione completata!');
         setTimeout(() => setStatus(''), 3000);

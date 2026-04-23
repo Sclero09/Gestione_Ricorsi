@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
 import { UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -7,13 +7,21 @@ export default function NuovoRicorso() {
   const [folderName, setFolderName] = useState('');
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    // Cleanup timer on unmount
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const handleCreate = async (e) => {
     e.preventDefault();
     setStatus('Creazione in corso...');
     
     try {
-      const response = await fetch('/recurrents', {
+      const response = await fetch('/api/recurrents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ folder_name: folderName }),
@@ -21,7 +29,7 @@ export default function NuovoRicorso() {
       
       if (response.ok) {
         setStatus('Cliente e cartella creati con successo!');
-        setTimeout(() => navigate('/'), 2000);
+        timerRef.current = setTimeout(() => navigate('/'), 2000);
       } else {
         const err = await response.json();
         setStatus(`Errore: ${err.detail}`);

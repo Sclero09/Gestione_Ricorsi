@@ -22,7 +22,7 @@ export default function Dashboard() {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('/settings');
+      const response = await fetch('/api/settings');
       const data = await response.json();
       setSettings(data);
     } catch (error) {
@@ -32,7 +32,7 @@ export default function Dashboard() {
 
   const fetchAppeals = async () => {
     try {
-      const response = await fetch('/appeals');
+      const response = await fetch('/api/appeals');
       const data = await response.json();
       setAppeals(data || []);
       if (data && data.length > 0) {

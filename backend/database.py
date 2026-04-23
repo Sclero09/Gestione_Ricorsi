@@ -68,7 +68,7 @@ class Document(SQLModel, table=True):
 
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
-engine = create_engine(sqlite_url, echo=False)
+engine = create_engine(sqlite_url, echo=False, connect_args={"check_same_thread": False})
 
 def create_db_and_tables():
     # Ensure directory exists if we decide to use a subfolder in the future,
