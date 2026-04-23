@@ -236,8 +236,7 @@ export default function Archivio() {
                                     borderLeft: `4px solid ${isActive ? 'currentColor' : 'transparent'}`,
                                     padding: '12px 16px',
                                     margin: '3px 6px',
-                                    borderRadius: '8px',
-                                    fontSize: '13px'
+                                    borderRadius: '8px'
                                   }}
                                 >
                                   {opt}

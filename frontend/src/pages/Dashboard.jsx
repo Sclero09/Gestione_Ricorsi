@@ -268,43 +268,42 @@ export default function Dashboard() {
                               const sClass = getStatusClass(opt);
                               const isActive = appeal.status === opt;
                               return (
-                                <div 
-                                  key={opt}
-                                  className="dropdown-item"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUpdateStatus(appeal.id, { status: opt });
-                                    setOpenMenuId(null);
-                                  }}
-                                  style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    gap: '10px',
-                                    fontWeight: isActive ? '700' : '500',
-                                    backgroundColor: sClass.includes('da-presentare') ? '#f1f5f9' : 
-                                                    sClass.includes('presentato') ? '#eff6ff' :
-                                                    sClass.includes('udienza') ? '#fffbeb' :
-                                                    (sClass.includes('accolto') || sClass.includes('concluso')) ? '#ecfdf5' :
-                                                    sClass.includes('rigettato') ? '#fef2f2' :
-                                                    sClass.includes('liquidato') ? '#f5f3ff' :
-                                                    sClass.includes('fatturato') ? '#faf5ff' : '#f1f5f9',
-                                    color: sClass.includes('da-presentare') ? '#64748b' : 
-                                           sClass.includes('presentato') ? '#2563eb' :
-                                           sClass.includes('udienza') ? '#d97706' :
-                                           (sClass.includes('accolto') || sClass.includes('concluso')) ? '#059669' :
-                                           sClass.includes('rigettato') ? '#dc2626' :
-                                           sClass.includes('liquidato') ? '#7c3aed' :
-                                           sClass.includes('fatturato') ? '#9333ea' : '#64748b',
-                                    borderLeft: `4px solid ${isActive ? 'currentColor' : 'transparent'}`,
-                                    padding: '12px 16px',
-                                    margin: '3px 6px',
-                                    borderRadius: '8px',
-                                    fontSize: '13px'
-                                  }}
-                                >
-                                  {opt}
-                                  {isActive && <Check size={16} style={{ marginLeft: 'auto' }} />}
-                                </div>
+                                 <div 
+                                   key={opt}
+                                   className="dropdown-item"
+                                   onClick={(e) => {
+                                     e.stopPropagation();
+                                     handleUpdateStatus(appeal.id, { status: opt });
+                                     setOpenMenuId(null);
+                                   }}
+                                   style={{ 
+                                     display: 'flex', 
+                                     alignItems: 'center', 
+                                     gap: '10px',
+                                     fontWeight: isActive ? '700' : '500',
+                                     backgroundColor: sClass.includes('da-presentare') ? '#f1f5f9' : 
+                                                     sClass.includes('presentato') ? '#eff6ff' :
+                                                     sClass.includes('udienza') ? '#fffbeb' :
+                                                     (sClass.includes('accolto') || sClass.includes('concluso')) ? '#ecfdf5' :
+                                                     sClass.includes('rigettato') ? '#fef2f2' :
+                                                     sClass.includes('liquidato') ? '#f5f3ff' :
+                                                     sClass.includes('fatturato') ? '#faf5ff' : '#f1f5f9',
+                                     color: sClass.includes('da-presentare') ? '#64748b' : 
+                                            sClass.includes('presentato') ? '#2563eb' :
+                                            sClass.includes('udienza') ? '#d97706' :
+                                            (sClass.includes('accolto') || sClass.includes('concluso')) ? '#059669' :
+                                            sClass.includes('rigettato') ? '#dc2626' :
+                                            sClass.includes('liquidato') ? '#7c3aed' :
+                                            sClass.includes('fatturato') ? '#9333ea' : '#64748b',
+                                     borderLeft: `4px solid ${isActive ? 'currentColor' : 'transparent'}`,
+                                     padding: '12px 16px',
+                                     margin: '3px 6px',
+                                     borderRadius: '8px'
+                                   }}
+                                 >
+                                   {opt}
+                                   {isActive && <Check size={16} style={{ marginLeft: 'auto' }} />}
+                                 </div>
                               );
                             })}
                             <div style={{ borderTop: '1px solid #eef2f7', margin: '6px 0' }}></div>

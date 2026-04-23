@@ -204,7 +204,8 @@ body {
   border-radius: 12px;
   box-shadow: var(--shadow-md);
   border-collapse: collapse;
-  overflow: hidden;
+  /* Rimossa overflow hidden per evitare di tagliare i menu */
+  overflow: visible;
 }
 
 .data-table th {
@@ -251,27 +252,28 @@ body {
 
 .status-dropdown {
   position: absolute;
-  top: 30px;
+  top: 35px;
   right: 0;
   background: white;
   border: 1px solid #eef2f7;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  z-index: 100;
-  width: 180px;
-  padding: 8px 0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  z-index: 9999; /* Super alto per stare sopra a tutto */
+  width: 220px;
+  padding: 6px 0;
+  overflow: hidden;
 }
 .dropdown-item {
-  padding: 8px 16px;
+  padding: 12px 16px;
   font-size: 13px;
-  color: #1e293b;
   cursor: pointer;
   display: flex;
   align-items: center;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  border: none;
 }
 .dropdown-item:hover {
-  background: #f8fafc;
+  filter: brightness(0.95);
 }
 
 /* Side Panel */

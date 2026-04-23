@@ -135,6 +135,38 @@ export default function Settings() {
               </p>
             </div>
 
+            <div style={{ marginBottom: '32px', borderBottom: '1px solid #eef2f7', paddingBottom: '24px' }}>
+              <label style={{ display: 'block', fontWeight: '700', marginBottom: '16px', fontSize: '15px', color: '#1e293b' }}>
+                Tema Applicazione
+              </label>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div 
+                  onClick={() => setTheme('light')}
+                  style={{ 
+                    flex: 1, padding: '20px', borderRadius: '12px', cursor: 'pointer',
+                    border: `3px solid ${theme === 'light' ? '#2e5bff' : '#f1f5f9'}`,
+                    backgroundColor: '#fff', textAlign: 'center',
+                    boxShadow: theme === 'light' ? '0 4px 12px rgba(46, 91, 255, 0.1)' : 'none',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>☀️ Tema Chiaro</div>
+                </div>
+                <div 
+                  onClick={() => setTheme('dark')}
+                  style={{ 
+                    flex: 1, padding: '20px', borderRadius: '12px', cursor: 'pointer',
+                    border: `3px solid ${theme === 'dark' ? '#2e5bff' : '#1e293b'}`,
+                    backgroundColor: '#1e293b', textAlign: 'center',
+                    boxShadow: theme === 'dark' ? '0 4px 12px rgba(46, 91, 255, 0.1)' : 'none',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#f1f5f9' }}>🌙 Tema Scuro</div>
+                </div>
+              </div>
+            </div>
+
             <div style={{ marginBottom: '24px' }}>
               <label style={{ display: 'block', fontWeight: '600', marginBottom: '8px', fontSize: '14px' }}>
                 Nome Avvocato
@@ -173,34 +205,6 @@ export default function Settings() {
                   outline: 'none'
                 }}
               />
-            </div>
-
-            <div style={{ marginBottom: '32px' }}>
-              <label style={{ display: 'block', fontWeight: '600', marginBottom: '12px', fontSize: '14px' }}>
-                Tema Applicazione
-              </label>
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div 
-                  onClick={() => setTheme('light')}
-                  style={{ 
-                    flex: 1, padding: '16px', borderRadius: '12px', cursor: 'pointer',
-                    border: `2px solid ${theme === 'light' ? '#2e5bff' : '#e3e8ee'}`,
-                    backgroundColor: '#fff', textAlign: 'center'
-                  }}
-                >
-                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#1a1f36' }}>Tema Chiaro</div>
-                </div>
-                <div 
-                  onClick={() => setTheme('dark')}
-                  style={{ 
-                    flex: 1, padding: '16px', borderRadius: '12px', cursor: 'pointer',
-                    border: `2px solid ${theme === 'dark' ? '#2e5bff' : '#334155'}`,
-                    backgroundColor: '#1e293b', textAlign: 'center'
-                  }}
-                >
-                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#f1f5f9' }}>Tema Scuro</div>
-                </div>
-              </div>
             </div>
               <button 
                 onClick={handleSave}
