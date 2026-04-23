@@ -110,53 +110,51 @@ export default function Settings() {
           </div>
 
           <div style={{
-            backgroundColor: '#fff',
-            padding: '32px',
+            backgroundColor: 'var(--white)',
+            padding: '24px',
             borderRadius: '12px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+            boxShadow: 'var(--shadow-md)',
             maxWidth: '600px'
           }}>
 
             {/* === TEMA === */}
-            <div style={{ marginBottom: '32px' }}>
-              <label style={{ ...labelStyle, fontSize: '15px' }}>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ ...labelStyle, fontSize: '14px' }}>
                 Tema Applicazione
               </label>
-              <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <div
                   onClick={() => setTheme('light')}
                   style={{
                     flex: 1,
-                    padding: '20px 16px',
-                    borderRadius: '12px',
+                    padding: '10px',
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    border: `3px solid ${theme === 'light' ? '#2e5bff' : '#e3e8ee'}`,
-                    backgroundColor: '#ffffff',
+                    border: `2px solid ${theme === 'light' ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                    backgroundColor: 'var(--white)',
                     textAlign: 'center',
-                    boxShadow: theme === 'light' ? '0 0 0 4px rgba(46,91,255,0.1)' : 'none',
                     transition: 'all 0.2s'
                   }}
                 >
-                  <Sun size={24} style={{ color: '#f59e0b', marginBottom: '8px' }} />
-                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Tema Chiaro</div>
+                  <Sun size={18} style={{ color: '#f59e0b', marginBottom: '4px' }} />
+                  <div style={{ fontSize: '12px', fontWeight: '700' }}>Chiaro</div>
                 </div>
 
                 <div
                   onClick={() => setTheme('dark')}
                   style={{
                     flex: 1,
-                    padding: '20px 16px',
-                    borderRadius: '12px',
+                    padding: '10px',
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    border: `3px solid ${theme === 'dark' ? '#2e5bff' : '#334155'}`,
-                    backgroundColor: '#1e293b',
+                    border: `2px solid ${theme === 'dark' ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                    backgroundColor: theme === 'dark' ? '#1e293b' : '#f8fafc',
                     textAlign: 'center',
-                    boxShadow: theme === 'dark' ? '0 0 0 4px rgba(46,91,255,0.2)' : 'none',
                     transition: 'all 0.2s'
                   }}
                 >
-                  <Moon size={24} style={{ color: '#a5b4fc', marginBottom: '8px' }} />
-                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#f1f5f9' }}>Tema Scuro</div>
+                  <Moon size={18} style={{ color: '#a5b4fc', marginBottom: '4px' }} />
+                  <div style={{ fontSize: '12px', fontWeight: '700', color: theme === 'dark' ? '#f1f5f9' : '#1e293b' }}>Scuro</div>
                 </div>
               </div>
             </div>

@@ -213,7 +213,7 @@ body {
 .data-table th {
   text-align: left;
   padding: 16px 24px;
-  background-color: #fafbfc;
+  background-color: var(--sidebar-bg);
   border-bottom: 1px solid var(--border-color);
   font-size: 12px;
   text-transform: uppercase;
@@ -232,7 +232,7 @@ body {
 }
 
 .data-table tr:hover {
-  background-color: #fcfdfe;
+  background-color: var(--sidebar-active);
 }
 
 /* Status Badges */

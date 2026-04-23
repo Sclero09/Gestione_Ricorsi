@@ -140,17 +140,17 @@ Stato: ${appeal.status}
   };
 
   return (
-    <div className="side-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div className="panel-title" style={{ padding: '16px', borderBottom: '1px solid #eef2f7', fontSize: '15px', fontWeight: '700' }}>
+    <div className="side-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'var(--sidebar-bg)' }}>
+      <div className="panel-title" style={{ padding: '16px', borderBottom: '1px solid var(--border-color)', fontSize: '15px', fontWeight: '700', color: 'var(--text-main)' }}>
         Directory Documenti
       </div>
       
-      <div style={{ padding: '8px 16px', fontSize: '13px', color: '#1e293b', fontStyle: 'italic', fontWeight: '700' }}>
+      <div style={{ padding: '8px 16px', fontSize: '13px', color: 'var(--text-muted)', fontStyle: 'italic', fontWeight: '700' }}>
         {recurrentName || 'Seleziona un cliente'}
       </div>
 
       {/* Main Actions Row */}
-      <div style={{ padding: '16px 16px 8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#697386' }}>
+      <div style={{ padding: '16px 16px 8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
         <div 
           onClick={() => handleOpenFolderInExplorer(appeal?.folder_path)}
           style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
@@ -158,7 +158,7 @@ Stato: ${appeal.status}
           className="folder-link"
         >
           <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} />
-          <span style={{ fontSize: '14px', fontWeight: '600' }}>Apri Cartella</span>
+          <span style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>Apri Cartella</span>
         </div>
         
         <div style={{ display: 'flex', gap: '16px' }}>
@@ -186,7 +186,7 @@ Stato: ${appeal.status}
             onClick={handleGoBack}
             style={{ 
               border: 'none', 
-              background: '#f1f5f9', 
+              background: 'var(--sidebar-active)', 
               padding: '4px', 
               borderRadius: '4px', 
               cursor: 'pointer', 
@@ -196,7 +196,7 @@ Stato: ${appeal.status}
             className="hover-bg-slate"
             title="Torna su"
           >
-            <ChevronLeft size={16} color="#475569" />
+            <ChevronLeft size={16} color="var(--text-muted)" />
           </button>
           
           <div 
@@ -207,7 +207,8 @@ Stato: ${appeal.status}
               gap: '6px', 
               cursor: 'pointer',
               fontSize: '14px',
-              fontWeight: '600'
+              fontWeight: '600',
+              color: 'var(--text-main)'
             }}
             className="folder-link"
             title={`Apri ${getSubDirName()} in Windows Explorer`}
@@ -225,7 +226,7 @@ Stato: ${appeal.status}
           margin: '0 16px 16px 16px',
           borderRadius: '8px',
           overflow: 'hidden',
-          border: '1px solid #e3e8ee',
+          border: '1px solid var(--border-color)',
           backgroundColor: '#000',
           height: '300px',
           position: 'relative'
@@ -254,15 +255,15 @@ Stato: ${appeal.status}
       )}
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px 16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', borderTop: !isAtRoot ? '1px solid #f1f5f9' : 'none', paddingTop: !isAtRoot ? '12px' : '0' }}>
-          <h3 style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', borderTop: !isAtRoot ? '1px solid var(--border-color)' : 'none', paddingTop: !isAtRoot ? '12px' : '0' }}>
+          <h3 style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Documenti Pratica
           </h3>
-          {isLoading && <span style={{ fontSize: '10px', color: '#697386' }}>Aggiornamento...</span>}
+          {isLoading && <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Aggiornamento...</span>}
         </div>
 
         {(!directoryItems || directoryItems.length === 0) ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', color: '#697386', fontSize: '14px', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
+          <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px', backgroundColor: 'var(--bg-color)', borderRadius: '8px' }}>
             {appeal ? 'Cartella vuota.' : 'Seleziona un rigo per vedere i file.'}
           </div>
         ) : (
@@ -281,8 +282,8 @@ Stato: ${appeal.status}
                     justifyContent: 'space-between',
                     padding: '10px 12px',
                     borderRadius: '8px',
-                    backgroundColor: '#fff',
-                    border: '1px solid #eef2f7',
+                    backgroundColor: 'var(--white)',
+                    border: '1px solid var(--border-color)',
                     transition: 'all 0.2s',
                     cursor: 'pointer'
                   }}
@@ -299,7 +300,8 @@ Stato: ${appeal.status}
                       overflow: 'hidden', 
                       textOverflow: 'ellipsis', 
                       fontSize: '13px',
-                      fontWeight: '500'
+                      fontWeight: '500',
+                      color: 'var(--text-main)'
                     }} className="filename-text">
                       {item.name}
                     </div>

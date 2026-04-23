@@ -44,7 +44,10 @@ export default function Archivio() {
 
   const fetchAppeals = async () => {
     try {
-      const response = await fetch('/api/appeals/archived');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const response = await fetch('/api/appeals/archived', { signal: controller.signal });
+      clearTimeout(timeoutId);
       const data = await response.json();
       setAppeals(data || []);
       if (data && data.length > 0) {
@@ -123,26 +126,27 @@ export default function Archivio() {
       <Sidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
       
       <div className="main-content">
-        <header className="top-bar">
-          <div className="search-container">
-            <Search size={18} color="#697386" />
+        <header className="top-bar" style={{ backgroundColor: 'var(--sidebar-bg)', borderBottom: '1px solid var(--border-color)' }}>
+          <div className="search-container" style={{ backgroundColor: 'var(--bg-color)', border: '1px solid var(--border-color)' }}>
+            <Search size={18} color="var(--text-muted)" />
             <input 
               type="text" 
               className="search-input" 
               placeholder="Cerca nell'archivio..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ backgroundColor: 'transparent', color: 'var(--text-main)' }}
             />
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '14px', fontWeight: '600' }}>Archivio Pratiche</div>
-              <div style={{ fontSize: '12px', color: '#697386' }}>Sola consultazione e ripristino</div>
+              <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)' }}>Archivio Pratiche</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Sola consultazione e ripristino</div>
             </div>
             <div style={{ 
-              width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#f1f5f9', 
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' 
+              width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--sidebar-active)', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-color)' 
             }}>
               <Archive style={{margin: 'auto'}} size={20} />
             </div>
