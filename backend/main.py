@@ -112,6 +112,35 @@ def list_files(recurrent_id: int, session: Session = Depends(get_session)):
     files = session.exec(statement).all()
     return files
 
+@app.get("/api/list_directory")
+def list_directory(path: str, session: Session = Depends(get_session)):
+    config = session.exec(select(AppConfig)).first()
+    if not config or not config.base_path:
+        raise HTTPException(status_code=400, detail="Base path not configured")
+    
+    # Security check: must be inside base_path
+    abs_path = os.path.abspath(path)
+    abs_base = os.path.abspath(config.base_path)
+    if not abs_path.startswith(abs_base):
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    if not os.path.exists(abs_path):
+        raise HTTPException(status_code=404, detail="Directory not found")
+    
+    items = []
+    try:
+        for entry in os.scandir(abs_path):
+            items.append({
+                "name": entry.name,
+                "path": entry.path,
+                "is_dir": entry.is_dir(),
+                "size": entry.stat().st_size if entry.is_file() else 0
+            })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    return sorted(items, key=lambda x: (not x["is_dir"], x["name"].lower()))
+
 @app.post("/api/scan")
 def trigger_scan(session: Session = Depends(get_session)):
     try:

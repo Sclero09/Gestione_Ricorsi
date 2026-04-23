@@ -1,16 +1,74 @@
-import React, { useState } from 'react';
-import { FileText, FolderOpen, ExternalLink, Eye, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, FolderOpen, ExternalLink, Eye, RefreshCw, Folder, ChevronLeft } from 'lucide-react';
 
-const FilePanel = ({ recurrentName, files = [], appeal, showCopyFeedback, onRefresh }) => {
+const FilePanel = ({ recurrentName, appeal, showCopyFeedback, onRefresh }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [previewFile, setPreviewFile] = useState(null);
+  const [currentPath, setCurrentPath] = useState('');
+  const [directoryItems, setDirectoryItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const getFileIconInfo = (filename) => {
+  // When appeal changes, reset to the root folder of that appeal
+  useEffect(() => {
+    if (appeal?.folder_path) {
+      setCurrentPath(appeal.folder_path);
+    } else {
+      setCurrentPath('');
+      setDirectoryItems([]);
+    }
+  }, [appeal]);
+
+  // Fetch directory items whenever currentPath changes
+  useEffect(() => {
+    if (currentPath) {
+      fetchDirectory(currentPath);
+    }
+  }, [currentPath]);
+
+  const fetchDirectory = async (path) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/list_directory?path=${encodeURIComponent(path)}`);
+      if (response.ok) {
+        const data = await response.json();
+        setDirectoryItems(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch directory:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getFileIconInfo = (filename, isDir) => {
+    if (isDir) return { color: "#fbbf24", label: "FOLDER" };
     const ext = (filename || '').toLowerCase().split('.').pop();
     if (ext === 'pdf') return { color: "#ef4444", label: "PDF" };
     if (['xls', 'xlsx', 'csv'].includes(ext)) return { color: "#10b981", label: "EXCEL" };
     if (['doc', 'docx'].includes(ext)) return { color: "#3b82f6", label: "WORD" };
     return { color: "#64748b", label: ext.toUpperCase() };
+  };
+
+  const handleItemClick = (item) => {
+    if (item.is_dir) {
+      setCurrentPath(item.path);
+    } else {
+      handleOpenFile(item.path);
+    }
+  };
+
+  const handleGoBack = () => {
+    if (!currentPath || currentPath === appeal?.folder_path) return;
+    
+    // Simple path manipulation for "back"
+    // On Windows, paths use backslashes or forward slashes
+    const separator = currentPath.includes('\\') ? '\\' : '/';
+    const parts = currentPath.split(separator);
+    if (parts.length > 1) {
+      parts.pop();
+      const newPath = parts.join(separator);
+      setCurrentPath(newPath);
+    }
   };
 
   const handleOpenFile = async (filePath) => {
@@ -25,13 +83,13 @@ const FilePanel = ({ recurrentName, files = [], appeal, showCopyFeedback, onRefr
     }
   };
 
-  const handleOpenFolder = async () => {
-    if (!appeal?.folder_path) return;
+  const handleOpenFolderInExplorer = async () => {
+    if (!currentPath) return;
     try {
       await fetch('/api/open_folder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: appeal.folder_path })
+        body: JSON.stringify({ path: currentPath })
       });
     } catch (error) {
       console.error('Failed to open folder:', error);
@@ -42,8 +100,9 @@ const FilePanel = ({ recurrentName, files = [], appeal, showCopyFeedback, onRefr
     if (!appeal?.recurrent_id || isRefreshing) return;
     setIsRefreshing(true);
     try {
-      const response = await fetch(`/refresh_folder/${appeal.recurrent_id}`, { method: 'POST' });
+      const response = await fetch(`/api/refresh_folder/${appeal.recurrent_id}`, { method: 'POST' });
       if (response.ok) {
+        fetchDirectory(currentPath);
         onRefresh();
         setTimeout(() => setIsRefreshing(false), 800);
       } else {
@@ -72,6 +131,8 @@ Stato: ${appeal.status}
     });
   };
 
+  const isAtRoot = currentPath === appeal?.folder_path;
+
   return (
     <div className="side-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="panel-title" style={{ padding: '16px', borderBottom: '1px solid #eef2f7', fontSize: '15px', fontWeight: '700' }}>
@@ -83,15 +144,27 @@ Stato: ${appeal.status}
       </div>
 
       <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#697386' }}>
-        <div 
-          onClick={handleOpenFolder}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'color 0.2s' }}
-          title="Apri cartella in Explorer"
-          className="hover-blue"
-        >
-          <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} />
-          <span style={{ fontSize: '14px', fontWeight: '500' }}>Apri Cartella</span>
+        <div style={{ display: 'flex', gap: '8px' }}>
+           {!isAtRoot && (
+             <button 
+               onClick={handleGoBack}
+               style={{ border: 'none', background: '#f1f5f9', padding: '4px', borderRadius: '4px', cursor: 'pointer', display: 'flex' }}
+               title="Torna su"
+             >
+               <ChevronLeft size={18} color="#475569" />
+             </button>
+           )}
+           <div 
+             onClick={handleOpenFolderInExplorer}
+             style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'color 0.2s' }}
+             title="Apri in Explorer"
+             className="hover-blue"
+           >
+             <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} />
+             <span style={{ fontSize: '14px', fontWeight: '500' }}>{isAtRoot ? 'Apri Cartella' : 'Apri qui'}</span>
+           </div>
         </div>
+        
         <div style={{ display: 'flex', gap: '16px' }}>
           <RefreshCw 
             size={18} 
@@ -136,7 +209,7 @@ Stato: ${appeal.status}
             Chiudi Anteprima
           </div>
           <iframe 
-             src={`/documents/view?path=${encodeURIComponent(previewFile.path || previewFile.file_path)}`}
+             src={`/api/documents/view?path=${encodeURIComponent(previewFile.path)}`}
              style={{ width: '100%', height: '100%', border: 'none' }}
              title="PDF Preview"
           />
@@ -144,18 +217,23 @@ Stato: ${appeal.status}
       )}
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px 16px' }}>
-        <h3 style={{ fontSize: '13px', fontWeight: '700', marginBottom: '12px', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
-          Documenti Pratica
-        </h3>
-        {(!files || files.length === 0) ? (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h3 style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
+            Documenti Pratica
+          </h3>
+          {isLoading && <span style={{ fontSize: '11px', color: '#697386' }}>Caricamento...</span>}
+        </div>
+
+        {(!directoryItems || directoryItems.length === 0) ? (
           <div style={{ padding: '40px 20px', textAlign: 'center', color: '#697386', fontSize: '14px', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-            {appeal ? 'Nessun documento trovato.' : 'Seleziona un rigo per vedere i file.'}
+            {appeal ? 'Cartella vuota.' : 'Seleziona un rigo per vedere i file.'}
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {files.map((file, idx) => {
-              const fileInfo = getFileIconInfo(file.file_name || file.name);
-              const isPdf = (file.file_name || '').toLowerCase().endsWith('.pdf');
+            {directoryItems.map((item, idx) => {
+              const fileInfo = getFileIconInfo(item.name, item.is_dir);
+              const isPdf = item.name.toLowerCase().endsWith('.pdf');
+              
               return (
                 <div 
                   key={idx}
@@ -168,30 +246,27 @@ Stato: ${appeal.status}
                     borderRadius: '8px',
                     backgroundColor: '#fff',
                     border: '1px solid #eef2f7',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    cursor: 'pointer'
                   }}
+                  onClick={() => handleItemClick(item)}
                 >
-                  <div 
-                    onClick={() => handleOpenFile(file.file_path || file.path)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flex: 1 }}
-                    title="Apri con applicazione di sistema"
-                  >
-                    <FileText size={16} color={fileInfo.color} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, overflow: 'hidden' }}>
+                    {item.is_dir ? <Folder size={16} color={fileInfo.color} fill={fileInfo.color} fillOpacity={0.2} /> : <FileText size={16} color={fileInfo.color} />}
                     <div style={{ 
                       whiteSpace: 'nowrap', 
                       overflow: 'hidden', 
                       textOverflow: 'ellipsis', 
-                      maxWidth: '160px',
                       fontSize: '13px',
                       fontWeight: '500'
                     }} className="filename-text">
-                      {file.file_name || file.name}
+                      {item.name}
                     </div>
                   </div>
                   
-                  {isPdf && (
+                  {!item.is_dir && isPdf && (
                     <button 
-                      onClick={() => setPreviewFile(file)}
+                      onClick={(e) => { e.stopPropagation(); setPreviewFile(item); }}
                       style={{
                         border: 'none',
                         background: '#f0f4ff',

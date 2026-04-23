@@ -47,7 +47,7 @@ export default function Dashboard() {
 
   const handleUpdateStatus = async (id, data) => {
     try {
-      const response = await fetch(`/appeals/${id}`, {
+      const response = await fetch(`/api/appeals/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -65,13 +65,6 @@ export default function Dashboard() {
 
   const handleSelectAppeal = async (appeal) => {
     setSelectedAppeal(appeal);
-    try {
-      const response = await fetch(`/recurrents/${appeal.recurrent_id}/files`);
-      const data = await response.json();
-      setSelectedFiles(data);
-    } catch (error) {
-      console.error('Failed to fetch files:', error);
-    }
   };
 
   const handleInlineEdit = (e, appealId, field) => {
