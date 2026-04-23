@@ -72,6 +72,57 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 engine = create_engine(sqlite_url, echo=False, connect_args={"check_same_thread": False})
 
+def _run_migrations(conn):
+    """
+    Aggiunge le colonne mancanti alle tabelle esistenti.
+    SQLite non supporta DROP COLUMN nelle versioni vecchie, ma supporta ADD COLUMN.
+    Questo permette di aggiornare lo schema senza perdere i dati.
+    """
+    cursor = conn.cursor()
+
+    # Colonne da garantire su ogni tabella: (tabella, colonna, tipo_sql, default)
+    migrations = [
+        # appeal - tutte le colonne aggiunte dopo la v1
+        ("appeal", "rg_number",         "VARCHAR",  "NULL"),
+        ("appeal", "court",             "VARCHAR",  "NULL"),
+        ("appeal", "section",           "VARCHAR",  "NULL"),
+        ("appeal", "judge",             "VARCHAR",  "NULL"),
+        ("appeal", "hearing_date",      "DATETIME", "NULL"),
+        ("appeal", "presentation_date", "DATETIME", "NULL"),
+        ("appeal", "status",            "VARCHAR",  "'Da Presentare'"),
+        ("appeal", "is_archived",       "INTEGER",  "0"),
+        ("appeal", "outcome",           "VARCHAR",  "NULL"),
+        ("appeal", "is_liquidated",     "INTEGER",  "0"),
+        ("appeal", "is_billed",         "INTEGER",  "0"),
+        ("appeal", "is_paid",           "INTEGER",  "0"),
+        ("appeal", "vestanet_code",     "VARCHAR",  "NULL"),
+        # appconfig - colonne aggiunte dopo la v1
+        ("appconfig", "theme",          "VARCHAR",  "'light'"),
+        ("appconfig", "lawyer_name",    "VARCHAR",  "'Avv. Rossi'"),
+        ("appconfig", "studio_name",    "VARCHAR",  "'Studio Legale'"),
+        # recurrent
+        ("recurrent", "created_at",     "DATETIME", "NULL"),
+        # document
+        ("document", "recurrent_id",    "INTEGER",  "NULL"),
+        ("document", "doc_category",    "VARCHAR",  "NULL"),
+        ("document", "content_snippet", "VARCHAR",  "NULL"),
+        ("document", "created_at",      "DATETIME", "NULL"),
+    ]
+
+    for table, column, col_type, default in migrations:
+        try:
+            cursor.execute(f"PRAGMA table_info({table})")
+            existing_cols = [row[1] for row in cursor.fetchall()]
+            if column not in existing_cols:
+                cursor.execute(
+                    f"ALTER TABLE {table} ADD COLUMN {column} {col_type} DEFAULT {default}"
+                )
+                print(f"[Migration] Added column {table}.{column}")
+        except Exception as e:
+            print(f"[Migration] Warning for {table}.{column}: {e}")
+
+    conn.commit()
+
 def create_db_and_tables():
     # Ensure directory exists if we decide to use a subfolder in the future,
     # but currently it's in the same folder as the EXE.
@@ -79,6 +130,11 @@ def create_db_and_tables():
     if parent_dir and not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
     SQLModel.metadata.create_all(engine)
+
+    # Run automatic migrations to add columns added after initial schema creation
+    import sqlite3
+    with sqlite3.connect(sqlite_file_name) as conn:
+        _run_migrations(conn)
 
 def get_session():
     with Session(engine) as session:

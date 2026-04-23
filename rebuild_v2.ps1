@@ -11,15 +11,30 @@ Write-Host "  GESTIONE RICORSI v2.0 - FULL REBUILD" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
 
 # --- Configurazione Percorsi ---
-$PythonExe = "C:\Users\franc\AppData\Local\Programs\Python\Python312\python.exe"
-$VenvPython = "$ProjectRoot\venv\Scripts\python.exe"
-$VenvPyInstaller = "$ProjectRoot\venv\Scripts\pyinstaller.exe"
+$VenvPython     = "$ProjectRoot\venv\Scripts\python.exe"
+$VenvPyInstaller= "$ProjectRoot\venv\Scripts\pyinstaller.exe"
+$DistDir        = "$ProjectRoot\dist"
+$DbBackup       = "$ProjectRoot\legal_app.db"     # copia di sviluppo / backup
+$DistDb         = "$DistDir\legal_app.db"
+
+# --- PROTEZIONE DATABASE ---
+# Prima di cancellare dist\, salviamo il DB se esiste
+if (Test-Path $DistDb) {
+    Write-Host ""
+    Write-Host "--- Backup database da dist\ ---" -ForegroundColor Yellow
+    Copy-Item -Path $DistDb -Destination $DbBackup -Force
+    Write-Host "  Backup salvato in: $DbBackup" -ForegroundColor Green
+}
 
 # --- STEP 1: Build Frontend (Vite) ---
 Write-Host ""
 Write-Host "--- STEP 1: Build Frontend (Vite) ---" -ForegroundColor Yellow
 Set-Location "$ProjectRoot\frontend"
 npm run build
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERRORE: Build frontend fallito!" -ForegroundColor Red
+    exit 1
+}
 Set-Location $ProjectRoot
 
 # --- STEP 2: Build Executable (PyInstaller) ---
@@ -53,6 +68,18 @@ $pyinstallerArgs = @(
 )
 
 & $VenvPyInstaller @pyinstallerArgs
+
+# --- STEP 3: RIPRISTINO DATABASE ---
+# Dopo la build, ripristiniamo il DB con i dati reali
+Write-Host ""
+Write-Host "--- STEP 3: Ripristino database in dist\ ---" -ForegroundColor Yellow
+
+if (Test-Path $DbBackup) {
+    Copy-Item -Path $DbBackup -Destination $DistDb -Force
+    Write-Host "  Database ripristinato in: $DistDb" -ForegroundColor Green
+} else {
+    Write-Host "  Nessun backup trovato, dist\ avra' un DB vuoto." -ForegroundColor Yellow
+}
 
 Write-Host ""
 Write-Host "BUILD v2.0 COMPLETATO!" -ForegroundColor Green
