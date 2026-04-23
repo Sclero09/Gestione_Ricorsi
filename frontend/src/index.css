@@ -149,7 +149,8 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* Cambiato da hidden a visible per non tagliare i menu */
+  overflow: visible;
 }
 
 .top-bar {
@@ -183,7 +184,8 @@ body {
 /* Pages */
 .page-container {
   padding: 32px;
-  overflow-y: auto;
+  /* Cambiato da auto a visible per permettere ai menu di uscire */
+  overflow: visible;
   flex: 1;
 }
 

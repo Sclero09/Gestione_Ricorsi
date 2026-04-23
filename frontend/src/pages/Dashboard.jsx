@@ -263,7 +263,11 @@ export default function Dashboard() {
                             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
                             onClick={() => setOpenMenuId(null)}
                           />
-                          <div className="status-dropdown" style={{ zIndex: 100, width: '220px' }}>
+                          <div className="status-dropdown" style={{ 
+                            zIndex: 9999, 
+                            width: '220px',
+                            ...(index >= 4 ? { bottom: '35px' } : { top: '35px' })
+                          }}>
                             {statusOptions.map(opt => {
                               const sClass = getStatusClass(opt);
                               const isActive = appeal.status === opt;
@@ -281,32 +285,18 @@ export default function Dashboard() {
                                      alignItems: 'center', 
                                      gap: '10px',
                                      fontWeight: isActive ? '700' : '500',
-                                     backgroundColor: sClass.includes('da-presentare') ? '#f1f5f9' : 
-                                                     sClass.includes('presentato') ? '#eff6ff' :
-                                                     sClass.includes('udienza') ? '#fffbeb' :
-                                                     (sClass.includes('accolto') || sClass.includes('concluso')) ? '#ecfdf5' :
-                                                     sClass.includes('rigettato') ? '#fef2f2' :
-                                                     sClass.includes('liquidato') ? '#f5f3ff' :
-                                                     sClass.includes('fatturato') ? '#faf5ff' : '#f1f5f9',
-                                     color: sClass.includes('da-presentare') ? '#64748b' : 
-                                            sClass.includes('presentato') ? '#2563eb' :
-                                            sClass.includes('udienza') ? '#d97706' :
-                                            (sClass.includes('accolto') || sClass.includes('concluso')) ? '#059669' :
-                                            sClass.includes('rigettato') ? '#dc2626' :
-                                            sClass.includes('liquidato') ? '#7c3aed' :
-                                            sClass.includes('fatturato') ? '#9333ea' : '#64748b',
-                                     borderLeft: `4px solid ${isActive ? 'currentColor' : 'transparent'}`,
-                                     padding: '12px 16px',
-                                     margin: '3px 6px',
-                                     borderRadius: '8px'
+                                     backgroundColor: isActive ? '#f1f5f9' : 'transparent',
+                                     padding: '10px 16px',
+                                     color: '#1e293b'
                                    }}
                                  >
+                                   <div className={`status-badge ${sClass}`} style={{ width: '10px', height: '10px', padding: 0, borderRadius: '50%' }}></div>
                                    {opt}
-                                   {isActive && <Check size={16} style={{ marginLeft: 'auto' }} />}
+                                   {isActive && <Check size={14} style={{ marginLeft: 'auto', color: '#2e5bff' }} />}
                                  </div>
                               );
                             })}
-                            <div style={{ borderTop: '1px solid #eef2f7', margin: '6px 0' }}></div>
+                            <div style={{ borderTop: '1px solid #eef2f7', margin: '4px 0' }}></div>
                             <div 
                               className="dropdown-item"
                               onClick={(e) => {
@@ -321,12 +311,10 @@ export default function Dashboard() {
                                 gap: '10px', 
                                 fontWeight: '700',
                                 padding: '12px 16px',
-                                margin: '3px 6px',
-                                borderRadius: '8px',
                                 backgroundColor: '#fef2f2'
                               }}
                             >
-                              <Archive size={18} />
+                              <Archive size={16} />
                               Archivia Pratica
                             </div>
                           </div>

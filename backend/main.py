@@ -71,6 +71,7 @@ def update_settings(config_data: dict, session: Session = Depends(get_session)):
         if "base_path" in config_data: config.base_path = config_data["base_path"]
         if "lawyer_name" in config_data: config.lawyer_name = config_data["lawyer_name"]
         if "studio_name" in config_data: config.studio_name = config_data["studio_name"]
+        if "theme" in config_data: config.theme = config_data["theme"]
     
     session.add(config)
     session.commit()
