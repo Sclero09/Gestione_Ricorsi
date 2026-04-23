@@ -252,7 +252,11 @@ Stato: ${appeal.status}
                   onClick={() => handleItemClick(item)}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, overflow: 'hidden' }}>
-                    {item.is_dir ? <Folder size={16} color={fileInfo.color} fill={fileInfo.color} fillOpacity={0.2} /> : <FileText size={16} color={fileInfo.color} />}
+                    {item.is_dir ? (
+                      <Folder size={18} color={fileInfo.color} fill={fileInfo.color} fillOpacity={0.2} style={{ flexShrink: 0 }} />
+                    ) : (
+                      <FileText size={18} color={fileInfo.color} style={{ flexShrink: 0 }} />
+                    )}
                     <div style={{ 
                       whiteSpace: 'nowrap', 
                       overflow: 'hidden', 
