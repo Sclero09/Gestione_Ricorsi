@@ -1,0 +1,22 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+*.spec
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.next/
+
+# Database e File Personali
+legal_app.db
+data/
+backup_v1/
+
+# OS
+.DS_Store
+Thumbs.db
