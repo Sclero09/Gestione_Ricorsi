@@ -60,8 +60,6 @@ const FilePanel = ({ recurrentName, appeal, showCopyFeedback, onRefresh }) => {
   const handleGoBack = () => {
     if (!currentPath || currentPath === appeal?.folder_path) return;
     
-    // Simple path manipulation for "back"
-    // On Windows, paths use backslashes or forward slashes
     const separator = currentPath.includes('\\') ? '\\' : '/';
     const parts = currentPath.split(separator);
     if (parts.length > 1) {
@@ -83,13 +81,14 @@ const FilePanel = ({ recurrentName, appeal, showCopyFeedback, onRefresh }) => {
     }
   };
 
-  const handleOpenFolderInExplorer = async () => {
-    if (!currentPath) return;
+  const handleOpenFolderInExplorer = async (pathOverride = null) => {
+    const targetPath = pathOverride || currentPath;
+    if (!targetPath) return;
     try {
       await fetch('/api/open_folder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: currentPath })
+        body: JSON.stringify({ path: targetPath })
       });
     } catch (error) {
       console.error('Failed to open folder:', error);
@@ -132,6 +131,13 @@ Stato: ${appeal.status}
   };
 
   const isAtRoot = currentPath === appeal?.folder_path;
+  
+  // Extract subdirectory name for display
+  const getSubDirName = () => {
+    if (isAtRoot || !currentPath) return '';
+    const separator = currentPath.includes('\\') ? '\\' : '/';
+    return currentPath.split(separator).pop();
+  };
 
   return (
     <div className="side-panel" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -143,26 +149,16 @@ Stato: ${appeal.status}
         {recurrentName || 'Seleziona un cliente'}
       </div>
 
-      <div style={{ padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#697386' }}>
-        <div style={{ display: 'flex', gap: '8px' }}>
-           {!isAtRoot && (
-             <button 
-               onClick={handleGoBack}
-               style={{ border: 'none', background: '#f1f5f9', padding: '4px', borderRadius: '4px', cursor: 'pointer', display: 'flex' }}
-               title="Torna su"
-             >
-               <ChevronLeft size={18} color="#475569" />
-             </button>
-           )}
-           <div 
-             onClick={handleOpenFolderInExplorer}
-             style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'color 0.2s' }}
-             title="Apri in Explorer"
-             className="hover-blue"
-           >
-             <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} />
-             <span style={{ fontSize: '14px', fontWeight: '500' }}>{isAtRoot ? 'Apri Cartella' : 'Apri qui'}</span>
-           </div>
+      {/* Main Actions Row */}
+      <div style={{ padding: '16px 16px 8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#697386' }}>
+        <div 
+          onClick={() => handleOpenFolderInExplorer(appeal?.folder_path)}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'color 0.2s' }}
+          title="Apri cartella principale del cliente"
+          className="hover-blue"
+        >
+          <FolderOpen size={18} color="#fbbf24" fill="#fbbf24" fillOpacity={0.2} />
+          <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569' }}>Apri Cartella</span>
         </div>
         
         <div style={{ display: 'flex', gap: '16px' }}>
@@ -182,6 +178,47 @@ Stato: ${appeal.status}
           />
         </div>
       </div>
+
+      {/* Subdirectory Breadcrumb Row */}
+      {!isAtRoot && currentPath && (
+        <div style={{ padding: '0 16px 12px 28px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button 
+            onClick={handleGoBack}
+            style={{ 
+              border: 'none', 
+              background: '#f1f5f9', 
+              padding: '4px', 
+              borderRadius: '4px', 
+              cursor: 'pointer', 
+              display: 'flex',
+              transition: 'background 0.2s'
+            }}
+            className="hover-bg-slate"
+            title="Torna su"
+          >
+            <ChevronLeft size={16} color="#475569" />
+          </button>
+          
+          <div 
+            onClick={() => handleOpenFolderInExplorer(currentPath)}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '6px', 
+              cursor: 'pointer',
+              color: '#2e5bff',
+              fontSize: '13px',
+              fontWeight: '600'
+            }}
+            title={`Apri ${getSubDirName()} in Windows Explorer`}
+          >
+            <Folder size={16} fill="#2e5bff" fillOpacity={0.1} style={{ flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {getSubDirName()}
+            </span>
+          </div>
+        </div>
+      )}
 
       {previewFile && (
         <div style={{ 
@@ -217,11 +254,11 @@ Stato: ${appeal.status}
       )}
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px 16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h3 style={{ fontSize: '13px', fontWeight: '700', color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.025em' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', borderTop: !isAtRoot ? '1px solid #f1f5f9' : 'none', paddingTop: !isAtRoot ? '12px' : '0' }}>
+          <h3 style={{ fontSize: '11px', fontWeight: '800', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Documenti Pratica
           </h3>
-          {isLoading && <span style={{ fontSize: '11px', color: '#697386' }}>Caricamento...</span>}
+          {isLoading && <span style={{ fontSize: '10px', color: '#697386' }}>Aggiornamento...</span>}
         </div>
 
         {(!directoryItems || directoryItems.length === 0) ? (
