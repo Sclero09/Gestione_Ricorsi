@@ -208,7 +208,7 @@ export default function Archivio() {
                               return (
                                 <div 
                                   key={opt}
-                                  className="dropdown-item"
+                                  className={`dropdown-item ${sClass}`}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleUpdateStatus(appeal.id, { status: opt });
@@ -218,13 +218,15 @@ export default function Archivio() {
                                     display: 'flex', 
                                     alignItems: 'center', 
                                     gap: '8px',
-                                    backgroundColor: isActive ? '#f8fafc' : 'transparent',
-                                    fontWeight: isActive ? '600' : '400'
+                                    fontWeight: isActive ? '700' : '500',
+                                    borderLeft: isActive ? '4px solid currentColor' : 'none',
+                                    padding: '10px 12px',
+                                    margin: '2px 4px',
+                                    borderRadius: '6px'
                                   }}
                                 >
-                                  <div className={`status-badge ${sClass}`} style={{ width: '12px', height: '12px', padding: 0, borderRadius: '50%' }}></div>
                                   {opt}
-                                  {isActive && <Check size={14} style={{ marginLeft: 'auto', color: '#2e5bff' }} />}
+                                  {isActive && <Check size={14} style={{ marginLeft: 'auto' }} />}
                                 </div>
                               );
                             })}
@@ -236,10 +238,19 @@ export default function Archivio() {
                                 handleUpdateStatus(appeal.id, { is_archived: false });
                                 setOpenMenuId(null);
                               }}
-                              style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '8px' }}
+                              style={{ 
+                                color: '#10b981', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '8px',
+                                fontWeight: '700',
+                                padding: '10px 12px',
+                                margin: '2px 4px',
+                                borderRadius: '6px'
+                              }}
                             >
                               <RotateCcw size={14} />
-                              Ripristina
+                              Ripristina Pratica
                             </div>
                           </div>
                         </>
