@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, FilePlus, Users, Settings, Scale, Menu } from 'lucide-react';
+import { LayoutGrid, FilePlus, Users, Settings, Scale, Menu, Archive } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = ({ isCollapsed, onToggle }) => {
@@ -9,6 +9,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
     { name: 'Dashboard', icon: LayoutGrid, path: '/' },
     { name: 'Nuovo Ricorso', icon: FilePlus, path: '/nuovo' },
     { name: 'Clienti', icon: Users, path: '/clienti' },
+    { name: 'Archivio', icon: Archive, path: '/archivio' },
     { name: 'Impostazioni', icon: Settings, path: '/settings' },
   ];
 

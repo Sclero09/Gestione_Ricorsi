@@ -37,6 +37,7 @@ class AppealUpdate(BaseModel):
     is_liquidated: Optional[bool] = None
     is_billed: Optional[bool] = None
     is_paid: Optional[bool] = None
+    is_archived: Optional[bool] = None
 
 app = FastAPI(title="Legal Appeal Tracker API")
 
@@ -78,8 +79,8 @@ def update_settings(config_data: dict, session: Session = Depends(get_session)):
 
 @app.get("/api/appeals")
 def list_appeals(session: Session = Depends(get_session)):
-    # Join Appeal with Recurrent
-    statement = select(Appeal, Recurrent).join(Recurrent)
+    # Join Appeal with Recurrent, only active ones
+    statement = select(Appeal, Recurrent).join(Recurrent).where(Appeal.is_archived == False)
     results = session.exec(statement).all()
     
     appeals_list = []
@@ -97,7 +98,34 @@ def list_appeals(session: Session = Depends(get_session)):
             "hearing_date": appeal.hearing_date.strftime("%d/%m/%Y") if appeal.hearing_date else None,
             "presentation_date": appeal.presentation_date.strftime("%d/%m/%Y") if appeal.presentation_date else None,
             "outcome": appeal.outcome,
-            "folder_path": recurrent.folder_path
+            "folder_path": recurrent.folder_path,
+            "is_archived": appeal.is_archived
+        })
+    return appeals_list
+
+@app.get("/api/appeals/archived")
+def list_archived_appeals(session: Session = Depends(get_session)):
+    # Join Appeal with Recurrent, only archived ones
+    statement = select(Appeal, Recurrent).join(Recurrent).where(Appeal.is_archived == True)
+    results = session.exec(statement).all()
+    
+    appeals_list = []
+    for appeal, recurrent in results:
+        appeals_list.append({
+            "id": appeal.id,
+            "recurrent_id": recurrent.id,
+            "name": f"{recurrent.surname} {recurrent.name}",
+            "rg_number": appeal.rg_number,
+            "court": appeal.court,
+            "status": appeal.status,
+            "is_liquidated": appeal.is_liquidated,
+            "is_billed": appeal.is_billed,
+            "is_paid": appeal.is_paid,
+            "hearing_date": appeal.hearing_date.strftime("%d/%m/%Y") if appeal.hearing_date else None,
+            "presentation_date": appeal.presentation_date.strftime("%d/%m/%Y") if appeal.presentation_date else None,
+            "outcome": appeal.outcome,
+            "folder_path": recurrent.folder_path,
+            "is_archived": appeal.is_archived
         })
     return appeals_list
 
@@ -230,7 +258,13 @@ def update_appeal(appeal_id: int, data: AppealUpdate, session: Session = Depends
     if not appeal:
         raise HTTPException(status_code=404, detail="Appeal not found")
     
-    for key, value in data.model_dump(exclude_unset=True).items():
+    update_data = data.model_dump(exclude_unset=True)
+    
+    # If we are changing the status of an archived appeal, automatically unarchive it
+    if "status" in update_data and appeal.is_archived and update_data.get("is_archived") is None:
+        appeal.is_archived = False
+    
+    for key, value in update_data.items():
         if hasattr(appeal, key):
             # Try to handle date conversion if field ends with _date
             if "_date" in key and value and isinstance(value, str):

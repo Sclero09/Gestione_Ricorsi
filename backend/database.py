@@ -44,6 +44,7 @@ class Appeal(SQLModel, table=True):
     hearing_date: Optional[datetime] = None
     presentation_date: Optional[datetime] = None
     status: str = Field(default="Nuovo")  # Nuovo, In Corso, Udienza Fissata, Concluso
+    is_archived: bool = Field(default=False)
     outcome: Optional[str] = None  # Accolto, Rigettato
     is_liquidated: bool = Field(default=False)
     is_billed: bool = Field(default=False)
