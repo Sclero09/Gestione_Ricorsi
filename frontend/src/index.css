@@ -294,7 +294,7 @@ body {
   color: #2e5bff;
 }
 .file-item:hover { border-color: #dbeafe; background-color: #fcfdfe; }
-.filename-text:hover { color: #2e5bff; text-decoration: underline; }
+.filename-text:hover { color: #2e5bff; }
 .preview-btn:hover { background-color: #2e5bff; color: white; }
 
 .refresh-spin {
