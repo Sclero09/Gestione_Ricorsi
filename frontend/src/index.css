@@ -224,7 +224,7 @@ body {
 .status-da-presentare { background: #f1f5f9; color: #64748b; }
 .status-presentato { background: #eff6ff; color: #2563eb; }
 .status-udienza-fissata { background: #fffbeb; color: #d97706; }
-.status-accolto { background: #ecfdf5; color: #059669; }
+.status-accolto, .status-concluso { background: #ecfdf5; color: #059669; }
 .status-rigettato { background: #fef2f2; color: #dc2626; }
 .status-liquidato { background: #f5f3ff; color: #7c3aed; }
 .status-fatturato { background: #faf5ff; color: #9333ea; }

@@ -84,7 +84,7 @@ export default function Dashboard() {
     return nameMatch || rgMatch || courtMatch;
   });
 
-  const statusOptions = ["Da Presentare", "Presentato", "Udienza Fissata", "Accolto", "Rigettato", "Liquidato", "Fatturato", "Concluso (Accolto)"];
+  const statusOptions = ["Da Presentare", "Presentato", "Udienza Fissata", "Accolto", "Rigettato", "Liquidato", "Fatturato", "Concluso"];
 
   const getStatusClass = (status) => {
     if (!status) return 'status-nuovo';
