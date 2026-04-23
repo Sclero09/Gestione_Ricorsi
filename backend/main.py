@@ -79,8 +79,8 @@ def update_settings(config_data: dict, session: Session = Depends(get_session)):
 
 @app.get("/api/appeals")
 def list_appeals(session: Session = Depends(get_session)):
-    # Join Appeal with Recurrent, only active ones
-    statement = select(Appeal, Recurrent).join(Recurrent).where(Appeal.is_archived == False)
+    # Join Appeal with Recurrent, only active ones (False or NULL)
+    statement = select(Appeal, Recurrent).join(Recurrent).where((Appeal.is_archived == False) | (Appeal.is_archived == None))
     results = session.exec(statement).all()
     
     appeals_list = []
