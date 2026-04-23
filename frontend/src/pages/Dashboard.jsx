@@ -18,6 +18,12 @@ export default function Dashboard() {
   useEffect(() => {
     fetchAppeals();
     fetchSettings();
+
+    const handleEsc = (event) => {
+      if (event.keyCode === 27) setOpenMenuId(null);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
   const fetchSettings = async () => {
@@ -245,22 +251,40 @@ export default function Dashboard() {
                       </button>
 
                       {openMenuId === appeal.id && (
-                        <div className="status-dropdown">
-                          {statusOptions.map(opt => (
-                            <div 
-                              key={opt}
-                              className="dropdown-item"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleUpdateStatus(appeal.id, { status: opt });
-                                setOpenMenuId(null);
-                              }}
-                            >
-                              {opt}
-                              {appeal.status === opt && <Check size={14} style={{ marginLeft: 'auto' }} />}
-                            </div>
-                          ))}
-                        </div>
+                        <>
+                          <div 
+                            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
+                            onClick={() => setOpenMenuId(null)}
+                          />
+                          <div className="status-dropdown" style={{ zIndex: 100 }}>
+                            {statusOptions.map(opt => {
+                              const sClass = getStatusClass(opt);
+                              const isActive = appeal.status === opt;
+                              return (
+                                <div 
+                                  key={opt}
+                                  className="dropdown-item"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleUpdateStatus(appeal.id, { status: opt });
+                                    setOpenMenuId(null);
+                                  }}
+                                  style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    gap: '8px',
+                                    backgroundColor: isActive ? '#f8fafc' : 'transparent',
+                                    fontWeight: isActive ? '600' : '400'
+                                  }}
+                                >
+                                  <div className={`status-badge ${sClass}`} style={{ width: '12px', height: '12px', padding: 0, borderRadius: '50%' }}></div>
+                                  {opt}
+                                  {isActive && <Check size={14} style={{ marginLeft: 'auto', color: '#2e5bff' }} />}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
                       )}
                     </td>
                   </tr>

@@ -46,6 +46,7 @@ $pyinstallerArgs = @(
     "--collect-all=uvicorn",
     "--collect-all=fastapi",
     "--name=LegalAppealTracker",
+    "--icon=app_icon.ico",
     "--clean",
     "--noconfirm",
     "backend/main.py"
