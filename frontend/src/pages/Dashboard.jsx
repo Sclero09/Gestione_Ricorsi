@@ -59,9 +59,16 @@ export default function Dashboard() {
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        setAppeals(appeals.map(a => a.id === id ? { ...a, ...data } : a));
-        if (selectedAppeal?.id === id) {
-          setSelectedAppeal({ ...selectedAppeal, ...data });
+        if (data.is_archived === true) {
+          setAppeals(appeals.filter(a => a.id !== id));
+          if (selectedAppeal?.id === id) {
+            setSelectedAppeal(null);
+          }
+        } else {
+          setAppeals(appeals.map(a => a.id === id ? { ...a, ...data } : a));
+          if (selectedAppeal?.id === id) {
+            setSelectedAppeal({ ...selectedAppeal, ...data });
+          }
         }
       }
     } catch (err) {

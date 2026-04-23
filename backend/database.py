@@ -23,6 +23,7 @@ class AppConfig(SQLModel, table=True):
     base_path: str = Field(index=True)
     lawyer_name: str = Field(default="Avv. Rossi")
     studio_name: str = Field(default="Studio Legale")
+    theme: str = Field(default="light")
 
 class Recurrent(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)

@@ -6,11 +6,16 @@ export default function Settings() {
   const [basePath, setBasePath] = useState('');
   const [lawyerName, setLawyerName] = useState('');
   const [studioName, setStudioName] = useState('');
+  const [theme, setTheme] = useState('light');
   const [status, setStatus] = useState('');
 
   useEffect(() => {
     fetchSettings();
   }, []);
+
+  const applyTheme = (t) => {
+    document.documentElement.setAttribute('data-theme', t);
+  };
 
   const fetchSettings = async () => {
     try {
@@ -19,6 +24,8 @@ export default function Settings() {
       setBasePath(data.base_path || '');
       setLawyerName(data.lawyer_name || '');
       setStudioName(data.studio_name || '');
+      setTheme(data.theme || 'light');
+      applyTheme(data.theme || 'light');
     } catch (error) {
       console.error('Failed to fetch settings:', error);
     }
@@ -33,10 +40,12 @@ export default function Settings() {
         body: JSON.stringify({ 
           base_path: basePath,
           lawyer_name: lawyerName,
-          studio_name: studioName
+          studio_name: studioName,
+          theme: theme
         }),
       });
       if (response.ok) {
+        applyTheme(theme);
         setStatus('Salvato con successo!');
         setTimeout(() => setStatus(''), 3000);
       }
@@ -166,7 +175,33 @@ export default function Settings() {
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <label style={{ display: 'block', fontWeight: '600', marginBottom: '12px', fontSize: '14px' }}>
+                Tema Applicazione
+              </label>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div 
+                  onClick={() => setTheme('light')}
+                  style={{ 
+                    flex: 1, padding: '16px', borderRadius: '12px', cursor: 'pointer',
+                    border: `2px solid ${theme === 'light' ? '#2e5bff' : '#e3e8ee'}`,
+                    backgroundColor: '#fff', textAlign: 'center'
+                  }}
+                >
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#1a1f36' }}>Tema Chiaro</div>
+                </div>
+                <div 
+                  onClick={() => setTheme('dark')}
+                  style={{ 
+                    flex: 1, padding: '16px', borderRadius: '12px', cursor: 'pointer',
+                    border: `2px solid ${theme === 'dark' ? '#2e5bff' : '#334155'}`,
+                    backgroundColor: '#1e293b', textAlign: 'center'
+                  }}
+                >
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#f1f5f9' }}>Tema Scuro</div>
+                </div>
+              </div>
+            </div>
               <button 
                 onClick={handleSave}
                 style={{
