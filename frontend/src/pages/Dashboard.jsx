@@ -108,6 +108,17 @@ export default function Dashboard() {
 
   const statusOptions = ["Da Presentare", "Presentato", "Udienza Fissata", "Accolto", "Rigettato", "Liquidato", "Fatturato", "Concluso"];
 
+  const statusColors = {
+    "Da Presentare":  { color: '#64748b', bg: '#f1f5f9' },
+    "Presentato":     { color: '#2563eb', bg: '#eff6ff' },
+    "Udienza Fissata":{ color: '#d97706', bg: '#fffbeb' },
+    "Accolto":        { color: '#059669', bg: '#ecfdf5' },
+    "Rigettato":      { color: '#dc2626', bg: '#fef2f2' },
+    "Liquidato":      { color: '#7c3aed', bg: '#f5f3ff' },
+    "Fatturato":      { color: '#0891b2', bg: '#ecfeff' },
+    "Concluso":       { color: '#374151', bg: '#f3f4f6' },
+  };
+
   const getStatusClass = (status) => {
     if (!status) return 'status-nuovo';
     const s = status.toLowerCase();
@@ -295,7 +306,7 @@ export default function Dashboard() {
                             padding: '6px 0'
                           }}>
                             {statusOptions.map(opt => {
-                              const sClass = getStatusClass(opt);
+                              const sc = statusColors[opt] || { color: '#1e293b', bg: '#f1f5f9' };
                               const isActive = appeal.status === opt;
                               return (
                                  <div 
@@ -310,15 +321,16 @@ export default function Dashboard() {
                                      display: 'flex', 
                                      alignItems: 'center', 
                                      gap: '10px',
-                                     fontWeight: isActive ? '700' : '500',
-                                     backgroundColor: isActive ? '#f1f5f9' : 'transparent',
+                                     fontWeight: isActive ? '700' : '600',
+                                     backgroundColor: isActive ? sc.bg : 'transparent',
                                      padding: '10px 16px',
-                                     color: '#1e293b'
+                                     color: sc.color,
+                                     borderRadius: '0'
                                    }}
                                  >
-                                   <div className={`status-badge ${sClass}`} style={{ width: '10px', height: '10px', padding: 0, borderRadius: '50%' }}></div>
+                                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: sc.color, flexShrink: 0 }}></div>
                                    {opt}
-                                   {isActive && <Check size={14} style={{ marginLeft: 'auto', color: '#2e5bff' }} />}
+                                   {isActive && <Check size={14} style={{ marginLeft: 'auto', color: sc.color }} />}
                                  </div>
                               );
                             })}
